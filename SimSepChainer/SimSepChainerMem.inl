@@ -4,12 +4,14 @@
 #ifndef GENERALHASHING_SIMSEPCHAINERMEM_INL
 #define GENERALHASHING_SIMSEPCHAINERMEM_INL
 #include "SimSepChainer.hpp"
+#include <memory>
 
 template<typename HashObj>
-SimSepChainer<HashObj>::SimSepChainer(HashFunction &hashFunc): hashTable_p()
-{
-    hashFunc_p = hashFunc;
-}
+SimSepChainer<HashObj>::SimSepChainer(HashFunction hashFunc, size_t capacity):
+capacity_p(capacity),
+hashFunc_p(hashFunc),
+hashTable_p(capacity)
+{}
 
 template<typename HashObj>
 SimSepChainer<HashObj>::SimSepChainer(const SimSepChainer<HashObj> &ht) {
@@ -18,7 +20,7 @@ SimSepChainer<HashObj>::SimSepChainer(const SimSepChainer<HashObj> &ht) {
 
 template<typename HashObj>
 SimSepChainer<HashObj>::SimSepChainer(SimSepChainer<HashObj> &&ht) noexcept{
-    *this = ht;
+    *this = std::move(ht);
 }
 
 template<typename HashObj>
@@ -26,6 +28,7 @@ SimSepChainer<HashObj> &SimSepChainer<HashObj>::operator=(const SimSepChainer<Ha
     if(ht != *this){
         hashTable_p = ht.hashTable_p;
         size_p = ht.size_p;
+        capacity_p = ht.capacity_p;
         hashFunc_p = ht.hashFunc_p;
     }
     return *this;
@@ -34,11 +37,17 @@ SimSepChainer<HashObj> &SimSepChainer<HashObj>::operator=(const SimSepChainer<Ha
 
 template<typename HashObj>
 SimSepChainer<HashObj> &SimSepChainer<HashObj>::operator=(SimSepChainer<HashObj> &&ht) noexcept{
-    hashTable_p = std::move(ht.hashTable_p);
-    size_p = ht.size_p;
-    hashFunc_p = std::move(ht.hashFunc_p);
 
-    ht.size_p = 0;
+    if(ht != *this) {
+        hashTable_p = std::move(ht.hashTable_p);
+        size_p = ht.size_p;
+        capacity_p = ht.capacity_p;
+        hashFunc_p = std::move(ht.hashFunc_p);
+
+        capacity_p = 0;
+        ht.size_p = 0;
+    }
+
     return *this;
 }
 #endif //GENERALHASHING_SIMSEPCHAINERMEM_INL

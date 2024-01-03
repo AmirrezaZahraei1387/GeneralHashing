@@ -10,9 +10,9 @@
 template<typename HashObj>
 class SimSepChainer{
 public:
-    using HashFunction = std::function<size_t(const HashObj&, size_t tableSize)>;
+    using HashFunction = std::function<size_t(const HashObj&, size_t)>;
 
-    explicit SimSepChainer(HashFunction& hashFunc);
+    explicit SimSepChainer(HashFunction hashFunc, size_t capacity);
     SimSepChainer(const SimSepChainer& ht);
     SimSepChainer(SimSepChainer&& ht) noexcept;
 
@@ -30,9 +30,11 @@ public:
     size_t getSize();
 
 private:
+    bool boundOk(size_t hash);
     std::vector<std::list<HashObj>> hashTable_p;
     HashFunction& hashFunc_p;
     size_t size_p{0};
+    size_t capacity_p;
 };
 
 #include "SimSepChainer.inl"

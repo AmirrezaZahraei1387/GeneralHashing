@@ -27,8 +27,13 @@ bool SimSepChainer<HashObj>::contain(const HashObj &ho) {
 
 template<typename HashObj>
 bool SimSepChainer<HashObj>::remove(const HashObj &ho) {
-    auto& whichList = hashTable_p[hashFunc_p(ho, size_p)];
-    auto itr = std::find(std::begin(whichList). std::end(whichList), ho);
+
+    size_t index{hashFunc_p(ho, size_p)};
+    if(!boundOk(index)){
+        return false;
+    }
+    auto& whichList = hashTable_p[index];
+    auto itr = std::find(std::begin(whichList), std::end(whichList), ho);
 
     if(itr== std::end(whichList))
         return false;
@@ -40,47 +45,46 @@ bool SimSepChainer<HashObj>::remove(const HashObj &ho) {
 
 template<typename HashObj>
 bool SimSepChainer<HashObj>::insert(const HashObj &ho) {
-    const size_t index{hashFunc_p(ho, size_p)};
 
-    if(index >= size_p){
-        hashTable_p.push_back(std::list<HashObj>{ho});
+    size_t index{hashFunc_p(ho, size_p)};
+    if(!boundOk(index)){
+        return false;
+    }
+
+    const auto& whichList = hashTable_p[index];
+    if(std::find(std::begin(whichList), std::end(whichList), ho) == std::end(whichList)){
+        whichList.push_back(ho);
         ++size_p;
         return true;
-    }else{
-        auto& whichList = hashTable_p[index];
-        if(std::find(std::begin(whichList), std::end(whichList), ho) == std::end(whichList))
-            return false;
-        else{
-            whichList.push_back(ho);
-            ++size_p;
-            return true;
-        }
     }
+    return false;
 }
 
 template<typename HashObj>
 bool SimSepChainer<HashObj>::insert(HashObj &&ho) {
-    const size_t index{hashFunc_p(ho, size_p)};
 
-    if(index >= size_p){
-        hashTable_p.push_back(std::list<HashObj>{std::move(ho)});
+    size_t index{hashFunc_p(ho, size_p)};
+    if(!boundOk(index)){
+        return false;
+    }
+
+    auto& whichList = hashTable_p[index];
+    if(std::find(std::begin(whichList), std::end(whichList), ho) == std::end(whichList)){
+        whichList.push_back(std::move(ho));
         ++size_p;
         return true;
-    }else{
-        auto& whichList = hashTable_p[index];
-        if(std::find(std::begin(whichList), std::end(whichList), ho) == std::end(whichList))
-            return false;
-        else{
-            whichList.push_back(std::move(ho));
-            ++size_p;
-            return true;
-        }
     }
+    return false;
 }
 
 template<typename HashObj>
 size_t SimSepChainer<HashObj>::getSize() {
     return size_p;
+}
+
+template<typename HashObj>
+bool SimSepChainer<HashObj>::boundOk(size_t hash) {
+    return (hash < capacity_p);
 }
 
 #endif //GENERALHASHING_SIMSEPCHAINER_INL
