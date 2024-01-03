@@ -5,14 +5,15 @@
 #ifndef GENERALHASHING_SIMPROBER_INL
 #define GENERALHASHING_SIMPROBER_INL
 #include "SimProber.hpp"
+#include "../NextPrime.hpp"
 
 template<typename HashObj>
 bool SimProber<HashObj>::isActive(size_t index) {
-    return hashTable_p[index] == ACTIVE;
+    return hashTable_p[index].status == ACTIVE;
 }
 
 template<typename HashObj>
-SimProber<HashObj>::SimProber(SimProber::HashFunction hashFunc, size_t capacity)
+SimProber<HashObj>::SimProber(HashFunction hashFunc, size_t capacity)
 :hashFunc_p(hashFunc),capacity_p(capacity), hashTable_p(capacity)
 {}
 
@@ -35,13 +36,13 @@ size_t SimProber<HashObj>::findPos(const HashObj &element) {
 }
 
 template<typename HashObj>
-bool SimProber<HashObj>::contain(HashObj &element) {
+bool SimProber<HashObj>::contain(const HashObj &element) {
     size_t index{findPos(element)};
     return isActive(index);
 }
 
 template<typename HashObj>
-bool SimProber<HashObj>::insert(HashObj &element) {
+bool SimProber<HashObj>::insert(const HashObj &element) {
     size_t index{findPos(element)};
     if(isActive(index)){
         return false;
@@ -73,7 +74,7 @@ bool SimProber<HashObj>::insert(HashObj &&element) {
 }
 
 template<typename HashObj>
-bool SimProber<HashObj>::remove(HashObj &element) {
+bool SimProber<HashObj>::remove(const HashObj &element) {
     size_t index{findPos(element)};
 
     if(!isActive(index)){
@@ -95,15 +96,16 @@ void SimProber<HashObj>::makeEmpty() {
     for(auto& x: hashTable_p){
         x.status = EMPTY;
     }
+    size_p = 0;
 }
 
 template<typename HashObj>
 void SimProber<HashObj>::rehash() {
-    std::vector<HashObj> oldHashTable = hashTable_p;
+    std::vector<Node> oldHashTable = hashTable_p;
     hashTable_p.resize(nextPrime(2*capacity_p));
 
     for(auto& x: hashTable_p){
-        x.status = DELETED;
+        x.status = EMPTY;
     }
 
     size_p = 0;
@@ -112,6 +114,11 @@ void SimProber<HashObj>::rehash() {
         if(x.status == ACTIVE)
             insert(std::move(x.element));
     }
+}
+
+template<typename HashObj>
+size_t SimProber<HashObj>::getCapacity() {
+    return capacity_p;
 }
 
 #endif //GENERALHASHING_SIMPROBER_INL

@@ -43,12 +43,16 @@ int main(){
     SimSepChainer<int> table(hashFunction, CAPACITY_TABLE);
     insertItems(table);
     std::cout<<"current size: "<<table.getSize()<<std::endl;
+    std::cout<<"current Capacity: "<<table.getCapacity()<<std::endl;
     removeItems(table);
     std::cout<<"current size: "<<table.getSize()<<std::endl;
+    std::cout<<"current Capacity: "<<table.getCapacity()<<std::endl;
     containTest(table);
     std::cout<<"making the list empty: "<<std::endl;
     table.makeEmpty();
     std::cout<<"current size: "<<table.getSize()<<std::endl;
+    std::cout<<"current Capacity: "<<table.getCapacity()<<std::endl;
     insertItems(table);
     std::cout<<"current size: "<<table.getSize()<<std::endl;
+    std::cout<<"current Capacity: "<<table.getCapacity()<<std::endl;
 }

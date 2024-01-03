@@ -13,11 +13,12 @@ public:
     using HashFunction = std::function<size_t(const HashObj&, size_t)>;
     explicit SimProber(HashFunction hashFunc, size_t capacity);
 
-    bool contain(HashObj& element);
-    bool insert(HashObj& element);
+    bool contain(const HashObj& element);
+    bool insert(const HashObj& element);
     bool insert(HashObj&& element);
-    bool remove(HashObj& element);
+    bool remove(const HashObj& element);
     size_t getSize();
+    size_t getCapacity();
     void makeEmpty();
 
 private:
@@ -29,8 +30,8 @@ private:
     };
 
 
-    std::vector<NodeState> hashTable_p;
-    HashFunction& hashFunc_p;
+    std::vector<Node> hashTable_p;
+    HashFunction hashFunc_p;
     size_t size_p{0};
     size_t capacity_p;
 
@@ -39,5 +40,6 @@ private:
     void rehash();
 };
 
+#include "SimProber.inl"
 
 #endif //GENERALHASHING_SIMPROBER_HPP
