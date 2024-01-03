@@ -25,7 +25,7 @@ private:
 
     struct Node{
         HashObj element;
-        NodeState status;
+        NodeState status{EMPTY};
     };
 
 
