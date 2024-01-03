@@ -10,18 +10,20 @@
 
 template<typename HashObj>
 void SimSepChainer<HashObj>::makeEmpty() {
-    hashTable_p.clear();
+    for(auto& theList: hashTable_p){
+        theList.clear();
+    }
     size_p = 0;
 }
 
-template<typename HashObj>
-bool SimSepChainer<HashObj>::isEmpty() {
-    return hashTable_p.empty();
-}
 
 template<typename HashObj>
 bool SimSepChainer<HashObj>::contain(const HashObj &ho) {
-    auto& whichList = hashTable_p[hashFunc_p(ho, size_p)];
+    size_t index{hashFunc_p(ho, size_p)};
+    if(!boundOk(index)){
+        return false;
+    }
+    auto& whichList = hashTable_p[index];
     return std::find(std::begin(whichList), std::end(whichList), ho) != std::end(whichList);
 }
 
@@ -51,7 +53,7 @@ bool SimSepChainer<HashObj>::insert(const HashObj &ho) {
         return false;
     }
 
-    const auto& whichList = hashTable_p[index];
+    auto& whichList = hashTable_p[index];
     if(std::find(std::begin(whichList), std::end(whichList), ho) == std::end(whichList)){
         whichList.push_back(ho);
         ++size_p;

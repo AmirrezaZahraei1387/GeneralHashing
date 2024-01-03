@@ -21,8 +21,6 @@ public:
 
     void makeEmpty();
 
-    bool isEmpty();
-
     bool insert(const HashObj& ho);
     bool insert(HashObj&& ho);
     bool remove(const HashObj& ho);
