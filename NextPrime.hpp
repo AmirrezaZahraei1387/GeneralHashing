@@ -1,0 +1,9 @@
+//
+// Created by KAVOSH on 1/3/2024.
+//
+#ifndef GENERALHASHING_NEXTPRIME_HPP
+#define GENERALHASHING_NEXTPRIME_HPP
+
+int nextPrime(int number);
+
+#endif //GENERALHASHING_NEXTPRIME_HPP
