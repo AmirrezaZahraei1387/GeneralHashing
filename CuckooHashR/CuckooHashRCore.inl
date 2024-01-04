@@ -4,6 +4,7 @@
 #ifndef GENERALHASHING_CUCKOOHASHRCORE_INL
 #define GENERALHASHING_CUCKOOHASHRCORE_INL
 #include "CuckooHashR.hpp"
+#include "../NextPrime.hpp"
 #include <memory>
 #include <utility>
 
@@ -22,7 +23,7 @@ void CuckooHashR<AnyT, HashFuncs>::rehash() {
 template<typename AnyT, typename HashFuncs>
 void CuckooHashR<AnyT, HashFuncs>::rehash(int newSize) {
     std::vector<CuckooNode> oldCuckooTable = CuckooTable;
-    CuckooTable.resize(newSize);
+    CuckooTable.resize(nextPrime(newSize));
 
     //resetting the table
     for(auto& x: CuckooTable){
@@ -76,25 +77,26 @@ bool CuckooHashR<AnyT, HashFuncs>::insertHelper(const AnyT &element) {
             }
 
             // no position which is free is found. Start for evicting a position randomly
-        }
+
         int i{0};
 
         do{
-            pos = getHashFunc(elementCopy, random());
+            pos = getHashFunc(elementCopy, random(r));
         } while (pos == last_pos && i++ < 5);
 
         last_pos = pos;
         std::swap(elementCopy, CuckooTable.at(pos).element);
     }
+        ++rehashesCount;
 
-    ++rehashesCount;
-
-    if(rehashesCount > MAX_REHASHES){
-        expand();
-        rehashesCount = 0;
-    }else{
-        rehash();
+        if(rehashesCount > MAX_REHASHES){
+            expand();
+            rehashesCount = 0;
+        }else{
+            rehash();
+        }
     }
+
 }
 
 
@@ -109,13 +111,13 @@ bool CuckooHashR<AnyT, HashFuncs>::insertHelper(const AnyT &&element) {
         int pos;
         int last_pos{-1};
 
-        for(int count{0}; count < COUNTING_LIMIT; ++count){
+        for(int count{0}; count < COUNTING_LIMIT; ++count) {
 
             // iterating through the hash functions
-            for(int i{0}; i<hashFuncN; ++i){
+            for (int i{0}; i < hashFuncN; ++i) {
                 pos = getHashFunc(elementCopy, i);
 
-                if(!isActive(pos)){
+                if (!isActive(pos)) {
                     CuckooTable.at(pos) = std::move(CuckooNode{std::move(elementCopy), true});
                     ++currentSize;
                     return true;
@@ -123,25 +125,26 @@ bool CuckooHashR<AnyT, HashFuncs>::insertHelper(const AnyT &&element) {
             }
 
             // no position which is free is found. Start for evicting a position randomly
+
+            int i{0};
+
+            do {
+                pos = getHashFunc(elementCopy, random(r));
+            } while (pos == last_pos && i++ < 5);
+
+            last_pos = pos;
+            std::swap(elementCopy, CuckooTable.at(pos).element);
         }
-        int i{0};
+        ++rehashesCount;
 
-        do{
-            pos = getHashFunc(elementCopy, random());
-        } while (pos == last_pos && i++ < 5);
-
-        last_pos = pos;
-        std::swap(elementCopy, CuckooTable.at(pos).element);
+        if(rehashesCount > MAX_REHASHES){
+            expand();
+            rehashesCount = 0;
+        }else{
+            rehash();
+        }
     }
 
-    ++rehashesCount;
-
-    if(rehashesCount > MAX_REHASHES){
-        expand();
-        rehashesCount = 0;
-    }else{
-        rehash();
-    }
 }
 
 template<typename AnyT, typename HashFuncs>

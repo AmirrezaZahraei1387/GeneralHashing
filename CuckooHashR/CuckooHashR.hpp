@@ -39,11 +39,17 @@ private:
 
     std::vector<CuckooNode> CuckooTable;
     int currentSize{0};
-    std::uniform_int_distribution<int> random;
     int hashFuncN{};
     int rehashesCount{0};
     HashFuncs hashFuncs;
+
+    std::random_device rd{};
+    std::mt19937 r{rd()};
+    std::uniform_int_distribution<int> random{0, hashFuncN - 1};
+
 };
 
+#include "CuckooHashRCore.inl"
+#include "CuckooHashRInter.inl"
 
 #endif //GENERALHASHING_CUCKOOHASHR_HPP
