@@ -40,7 +40,7 @@ int CuckooHashR<AnyT, HashFuncs>::findPos(const AnyT &element) {
     for(int i{0}; i<hashFuncN; ++i){
         int pos{getHashFuc(element, i)};
 
-        if(CuckooTable.at(pos).isActive && CuckooTable.at(pos).element == element)
+        if(isActive(pos) && CuckooTable.at(pos).element == element)
             return pos;
     }
     return -1;
@@ -68,7 +68,7 @@ bool CuckooHashR<AnyT, HashFuncs>::insertHelper(const AnyT &element) {
             for(int i{0}; i<hashFuncN; ++i){
                 pos = getHashFunc(elementCopy, i);
 
-                if(!CuckooTable.at(pos).isActive){
+                if(!isActive(pos)){
                     CuckooTable.at(pos) = std::move(CuckooNode{elementCopy, true});
                     ++currentSize;
                     return true;
@@ -115,7 +115,7 @@ bool CuckooHashR<AnyT, HashFuncs>::insertHelper(const AnyT &&element) {
             for(int i{0}; i<hashFuncN; ++i){
                 pos = getHashFunc(elementCopy, i);
 
-                if(!CuckooTable.at(pos).isActive){
+                if(!isActive(pos)){
                     CuckooTable.at(pos) = std::move(CuckooNode{std::move(elementCopy), true});
                     ++currentSize;
                     return true;
@@ -142,6 +142,22 @@ bool CuckooHashR<AnyT, HashFuncs>::insertHelper(const AnyT &&element) {
     }else{
         rehash();
     }
+}
+
+template<typename AnyT, typename HashFuncs>
+CuckooHashR<AnyT, HashFuncs>::CuckooHashR(int capacity)
+: CuckooTable(capacity)
+{
+    hashFuncN = hashFuncs.getHashFuncN();
+}
+
+
+template<typename AnyT, typename HashFuncs>
+bool CuckooHashR<AnyT, HashFuncs>::isActive(int pos) {
+    if(pos == -1){
+        return false;
+    }
+    return CuckooTable.at(pos).isActive;
 }
 
 #endif //GENERALHASHING_CUCKOOHASHRCORE_INL

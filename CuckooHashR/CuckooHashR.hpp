@@ -15,19 +15,20 @@ public:
     bool insert(const AnyT& element);
     bool insert(AnyT&& element);
     void makeEmpty();
-    void getSize();
+    int getSize();
     bool remove(const AnyT& element);
     bool contain(const AnyT& element);
 private:
 
     struct CuckooNode{
         AnyT element;
-        bool isActive;
+        bool isActive{false};
     };
 
     static constexpr double LOAD_FACTER{0.40};
     static constexpr int MAX_REHASHES{5};
 
+    bool isActive(int pos);
     bool insertHelper(const AnyT& element);
     bool insertHelper(const AnyT&& element);
     size_t getHashFunc(const AnyT& element, int which);
