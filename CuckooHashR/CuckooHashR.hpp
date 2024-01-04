@@ -30,7 +30,7 @@ private:
 
     bool insertHelper(const AnyT& element);
     bool insertHelper(const AnyT&& element);
-    size_t getHashFuc(const AnyT& element, int which);
+    size_t getHashFunc(const AnyT& element, int which);
     int findPos(const AnyT& element);
     void rehash();
     void rehash(int newSize);

@@ -11,4 +11,4 @@ add_executable(GeneralHashing
 
         SimProber/SimProber.hpp
         SimProber/SimProber.inl
-        NextPrime.hpp NextPrime.cpp CuckooHashR/CuckooHashR.hpp CuckooHashR/CuckooHashRCore.inl CuckooHashR/CuckooHashRInter..inl)
+        NextPrime.hpp NextPrime.cpp CuckooHashR/CuckooHashR.hpp CuckooHashR/CuckooHashRCore.inl CuckooHashR/CuckooHashRInter.inl)
